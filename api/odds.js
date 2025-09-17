@@ -4,9 +4,25 @@ export default async function handler(req, res) {
     if (!process.env.ODDS_API_KEY) {
       return res.status(500).json({ error: 'ODDS_API_KEY missing' });
     }
+
     const ODDS_API = 'https://api.the-odds-api.com/v4';
-    // MVP: Champions League i EU-regionen (du kan mappa liga->sport senare)
-    const sport = 'soccer_uefa_champions_league';
+
+    // Läs in league_id från query (?league_id=39)
+    const url = new URL(req.url, `https://${req.headers.host}`);
+    const league_id = url.searchParams.get('league_id');
+
+    // Mappa API-Football league_id till TheOddsAPI sport key
+    const leagueMap = {
+      39: 'soccer_epl', // Premier League
+      140: 'soccer_spain_la_liga',
+      135: 'soccer_italy_serie_a',
+      78: 'soccer_germany_bundesliga',
+      61: 'soccer_france_ligue_one',
+      2: 'soccer_uefa_champions_league',
+      3: 'soccer_uefa_europa_league'
+    };
+
+    const sport = leagueMap[league_id] || 'soccer_epl'; // fallback EPL
     const regions = 'eu';
     const markets = 'h2h,spreads,totals';
 
@@ -14,15 +30,14 @@ export default async function handler(req, res) {
     if (!r.ok) throw new Error(`TheOddsAPI ${r.status}`);
     const data = await r.json();
 
-    // Returnera första bookmaker-marknader som demo
-    const sample = data?.[0] ?? null;
-    const marketsOut = sample?.bookmakers?.[0]?.markets ?? [];
-
     res.status(200).json({
       source: 'the-odds-api',
-      markets: marketsOut,
-      note: 'MVP: mappa sport/lag exakt i v1.1 för bättre matchning.'
+      league_id,
+      sport,
+      count: data.length,
+      odds: data
     });
+
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
