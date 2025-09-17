@@ -1,34 +1,26 @@
 openapi: 3.1.0
-info:
-  title: BetIQ Data Gateway
-  version: 1.0.0
+info: { title: BetIQ Data Gateway, version: 1.0.0 }
 servers:
-  - url: https://DIN-APP.vercel.app
+  - url: https://betiq-gateway.vercel.app
 paths:
-  /fixtures:
+  /api/fixtures:
     get:
-      summary: List fixtures for a date (today default)
+      summary: List fixtures (today by default, CET)
       parameters:
         - in: query
           name: date
+          description: YYYY-MM-DD
           schema: { type: string, example: "2025-09-17" }
-      responses:
-        "200": { description: OK }
-  /odds:
+      responses: { "200": { description: OK } }
+  /api/odds:
     get:
-      summary: Odds (demo mapping) for a fixture
+      summary: Odds demo (UCL EU region, h2h/spreads/totals)
+      responses: { "200": { description: OK } }
+  /api/xg:
+    get:
+      summary: Simple xG proxy for a fixture
       parameters:
         - in: query
           name: fixture_id
-          schema: { type: string }
-      responses:
-        "200": { description: OK }
-  /xg:
-    get:
-      summary: xG proxy for a fixture
-      parameters:
-        - in: query
-          name: fixture_id
-          schema: { type: string }
-      responses:
-        "200": { description: OK }
+          schema: { type: string, example: "123" }
+      responses: { "200": { description: OK } }
