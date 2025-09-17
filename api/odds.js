@@ -18,7 +18,7 @@ export default async function handler(req, res) {
       135: 'soccer_italy_serie_a',
       78: 'soccer_germany_bundesliga',
       61: 'soccer_france_ligue_one',
-      2: 'soccer_uefa_champions_league',
+      2: 'soccer_uefa_champs_league',
       3: 'soccer_uefa_europa_league'
     };
 
